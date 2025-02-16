@@ -1,0 +1,291 @@
+:root {
+    --color-primary: #FAFAFA;
+    --color-secondary: #E0E0E0;
+    --color-accent: #8AAAE5;
+    --color-text: #424242;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--color-primary);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 顶部区域 */
+.header {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.logo {
+    font-size: 2.5rem;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+}
+
+.intro {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.intro-quote {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: 0.8rem;
+    font-weight: 300;
+}
+
+.intro-author {
+    font-size: 1rem;
+    color: var(--color-text);
+    opacity: 0.8;
+    font-style: italic;
+}
+
+/* 相册区域 */
+.gallery {
+    margin: 40px auto;
+    max-width: 600px;
+    width: 50%;
+}
+
+.gallery-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+.gallery-container {
+    aspect-ratio: 16 / 9;  /* 设置固定的宽高比 */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.gallery-item {
+    width: 100%;
+    height: 100%;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.5s ease-in-out;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.02);  /* 鼠标悬停时轻微放大效果 */
+}
+
+/* 社交链接 */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.social-link:hover {
+    transform: scale(1.1);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--color-text);
+}
+
+.bilibili:hover .icon {
+    fill: #00A1D6;  /* 哔哩哔哩的品牌色 */
+}
+
+.weibo:hover .icon {
+    fill: #E6162D;  /* 微博的品牌色 */
+}
+
+/* 底栏 */
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--color-secondary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .social-links {
+        flex-wrap: wrap;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+
+    .gallery {
+        width: 90%;
+    }
+
+    .intro-quote {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .intro-author {
+        font-size: 0.9rem;
+    }
+}
+
+/* AI助手对话区 */
+.ai-chat {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chat-messages {
+    min-height: 100px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.message.assistant {
+    background: var(--color-accent);
+    color: white;
+    margin-right: auto;
+}
+
+.message.user {
+    background: var(--color-secondary);
+    margin-left: auto;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--color-secondary);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.send-btn {
+    padding: 10px 20px;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.send-btn:hover {
+    background: #7090d0;
+}
+
+/* 邮箱图标相关样式 */
+.email {
+    position: relative;
+}
+
+.email-tooltip {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-text);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.email-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 6px 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent var(--color-text) transparent;
+}
+
+.email:hover .email-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+.email:hover .icon {
+    fill: #4A7CF6;  /* QQ邮箱的品牌色 */
+}
+
+/* 点击复制效果 */
+.email.copied .email-tooltip::after {
+    content: '已复制!';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent);
+    border-radius: 6px;
+    animation: fadeOut 5s forwards;
+} 
