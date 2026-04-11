@@ -1,167 +1,133 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 轮播相关代码
-    const galleryImg = document.querySelector('.gallery-item img');
-    let currentImageIndex = 0;
-    const images = [
-        'imgs/4K黄昏.png',
-        'imgs/a lonely winte.png',
-        'imgs/Artic Sunset.png'
-    ];
-    
-    // 图片加载错误处理
-    galleryImg.onerror = function() {
-        console.error('图片加载失败:', this.src);
-        this.src = 'https://picsum.photos/1200/675';
+
+    // Mobile nav toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (navToggle) {
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+    }
+
+    // Counter animation for hero stats
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 2000;
+            const start = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                counter.textContent = Math.floor(target * eased);
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    counter.textContent = target;
+                }
+            }
+
+            requestAnimationFrame(update);
+        });
+    }
+
+    // Skill level bars animation
+    function animateSkillBars() {
+        const bars = document.querySelectorAll('.level-bar');
+        bars.forEach(bar => {
+            const level = bar.getAttribute('data-level');
+            bar.style.width = level + '%';
+        });
+    }
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
     };
 
-    // 切换图片函数
-    function changeImage() {
-        galleryImg.style.opacity = '0';
-        setTimeout(() => {
-            galleryImg.src = images[currentImageIndex];
-            galleryImg.style.opacity = '1';
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-        }, 500);
-    }
+    const fadeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                fadeObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-    // 设置自动轮播间隔（5秒）
-    setInterval(changeImage, 5000);
-
-    // 初始加载第一张图片
-    galleryImg.src = images[0];
-    
-    // AI聊天相关代码
-    const chatMessages = document.querySelector('.chat-messages');
-    const userInput = document.getElementById('userInput');
-    const sendButton = document.querySelector('.send-btn');
-    
-    const MOONSHOT_API_KEY = 'sk-SsnAJdkcdjfnDI40o4YfKfsY1jvNorGCmJTTM1Xx971j4wHd';  // 临时保留，但需要注意安全性
-    const API_URL = 'https://api.moonshot.cn/v1/chat/completions';
-
-    async function getAIResponse(userMessage) {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${MOONSHOT_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "moonshot-v1-8k",
-                    messages: [
-                        {
-                            role: "system",
-                            content: `你是之岸渐的AI助手，主人是一位独特的跨界人才：金融从业者、玄学爱好者和双碳领域的探索者。请遵循以下规则：
-
-                            1. 专业领域介绍：
-                               - 金融领域：擅长分析经济趋势和市场脉动
-                               - 玄学研究：对生命哲学和东方玄学有独特见解
-                               - 双碳探索：致力于可持续发展和环境保护实践
-
-                            2. 回答特点：
-                               - 在金融话题上展现专业洞见
-                               - 在玄学讨论中体现深度思考
-                               - 在环保议题上分享实践经验
-                               - 善于将这三个领域进行跨界连接
-
-                            3. 回答风格：
-                               - 用友好且专业的语气
-                               - 回答简洁，通常不超过三句话
-                               - 适当使用表情符号增加亲和力
-                               - 在专业术语后适时添加通俗解释
-
-                            4. 互动指南：
-                               - 鼓励访客探索作品集中的创作
-                               - 对不确定的问题建议直接咨询之岸渐
-                               - 在合适时机推荐相关领域的探讨
-                               - 对负面言论保持礼貌但坚定的回应
-
-                            5. 核心价值观：
-                               - 强调理性思维与玄学智慧的结合
-                               - 突出金融与环保的可持续发展理念
-                               - 展现对生命和自然的敬畏之心
-                               - 传递积极向上的人生态度`
-                        },
-                        {
-                            role: "user",
-                            content: userMessage
-                        }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 800,
-                    stream: false
-                })
-            });
-
-            const data = await response.json();
-            return data.choices[0].message.content;
-        } catch (error) {
-            console.error('AI响应错误:', error);
-            return '抱歉，我现在遇到了一些问题，请稍后再试。';
-        }
-    }
-
-    function addMessage(text, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
-        messageDiv.innerHTML = `<p>${text}</p>`;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        return messageDiv;  // 返回消息元素以便后续可能的移除操作
-    }
-
-    async function handleSend() {
-        const text = userInput.value.trim();
-        if (text === '') return;
-
-        // 添加用户消息
-        addMessage(text, true);
-        
-        // 显示加载状态
-        const loadingMessage = addMessage('思考中...', false);
-        
-        try {
-            // 获取AI回复
-            const response = await getAIResponse(text);
-            
-            // 移除加载消息
-            loadingMessage.remove();
-            
-            // 添加AI回复
-            addMessage(response);
-        } catch (error) {
-            // 移除加载消息
-            loadingMessage.remove();
-            
-            // 显示错误消息
-            addMessage('抱歉，我遇到了一些问题，请稍后再试。');
-        }
-
-        // 清空输入框
-        userInput.value = '';
-    }
-
-    // 点击发送按钮发送消息
-    sendButton.addEventListener('click', handleSend);
-
-    // 按回车键发送消息
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            handleSend();
-        }
+    // Apply fade-in to major sections
+    document.querySelectorAll(
+        '.skill-card, .timeline-item, .project-card, .edu-card, .contact-card'
+    ).forEach(el => {
+        el.classList.add('fade-in');
+        fadeObserver.observe(el);
     });
 
-    // 在 DOMContentLoaded 事件处理函数中添加
-    const emailLink = document.querySelector('.social-link.email');
-    const emailAddress = '380022215@qq.com';
+    // Trigger counter animation when hero is in view
+    const heroObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                heroObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
 
-    emailLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        navigator.clipboard.writeText(emailAddress).then(() => {
-            emailLink.classList.add('copied');
-            setTimeout(() => {
-                emailLink.classList.remove('copied');
-            }, 5000);
+    const heroStats = document.querySelector('.hero-stats');
+    if (heroStats) heroObserver.observe(heroStats);
+
+    // Trigger skill bars when section is in view
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateSkillBars();
+                skillObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    const skillsSection = document.querySelector('.skills-section');
+    if (skillsSection) skillObserver.observe(skillsSection);
+
+    // Back to top button
+    const backToTop = document.querySelector('.back-to-top');
+
+    if (backToTop) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Smooth anchor navigation with offset for fixed navbar
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
         });
     });
-}); 
+
+});
